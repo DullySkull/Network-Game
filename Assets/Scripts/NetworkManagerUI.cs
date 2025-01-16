@@ -4,28 +4,17 @@ using UnityEngine.UI;
 
 public class NetworkManagerUI : NetworkBehaviour
 {
-    public Button hostButton;
-    public Button clientButton;
-    public Button serverButton;
-
-    private void Start()
-    {
-        hostButton.onClick.AddListener(OnHostClicked);
-        clientButton.onClick.AddListener(OnClientClicked);
-        serverButton.onClick.AddListener(OnServerClicked);
-    }
-
-    private void OnHostClicked()
+    public void OnHostClicked()
     {
         NetworkManager.Singleton.StartHost();
     }
 
-    private void OnClientClicked()
+    public void OnClientClicked()
     {
         NetworkManager.Singleton.StartClient();
     }
 
-    private void OnServerClicked()
+    public void OnServerClicked()
     {
         NetworkManager.Singleton.StartServer();
     }
