@@ -18,4 +18,16 @@ public class NetworkManagerUI : NetworkBehaviour
     {
         NetworkManager.Singleton.StartServer();
     }
+    
+    public void OnDisconnectClicked()
+    {
+        if (NetworkManager.Singleton.IsHost)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+        else if (NetworkManager.Singleton.IsClient)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+    }
 }

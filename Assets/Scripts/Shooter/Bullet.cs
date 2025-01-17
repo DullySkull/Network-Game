@@ -11,7 +11,7 @@ public class Bullet : NetworkBehaviour
         {
             if (collision.gameObject.CompareTag("Wall"))
             {
-                DestroyBullet();
+                DestroyBulletServerRpc();
             }
         }
 
@@ -20,17 +20,18 @@ public class Bullet : NetworkBehaviour
             var playerHealth = collision.gameObject.GetComponent<Health>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamageServerRpc(damage);
+                playerHealth.TakeDamageClientRpc(damage);
             }
-            DestroyBullet();
+            DestroyBulletServerRpc();
         }
     }
 
-    private void DestroyBullet()
+    [ServerRpc]
+    private void DestroyBulletServerRpc()
     {
         NotifyShooterClientRpc();
 
-        Destroy(gameObject);
+        GetComponent<NetworkObject>().Despawn();
     }
 
     [ClientRpc]

@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 5855004757676019937}
   - component: {fileID: 5122984971136083558}
   - component: {fileID: 1917414932115769938}
+  - component: {fileID: 2545745754787252350}
   m_Layer: 0
   m_Name: PlayerTag
   m_TagString: Untagged
@@ -70,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1c49829a6b5f5eb4298c3f76ec8dd3d7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -234,3 +235,21 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!114 &2545745754787252350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5354910571551264082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e831789a84b1e24c820ed63852b1f03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TaggedPlayerId:
+    m_InternalValue: 0
+  defaultMaterial: {fileID: 2100000, guid: 1c49829a6b5f5eb4298c3f76ec8dd3d7, type: 2}
+  taggedMaterial: {fileID: 2100000, guid: 4c57d40baa15744408dba89c910384d5, type: 2}
+  emoteEffectPrefab: {fileID: 0}

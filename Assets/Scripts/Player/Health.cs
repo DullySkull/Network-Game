@@ -11,8 +11,8 @@ public class Health : NetworkBehaviour
         currentHealth = maxHealth;
     }
 
-    [ServerRpc]
-    public void TakeDamageServerRpc(int damage)
+    [ClientRpc]
+    public void TakeDamageClientRpc(int damage)
     {
         currentHealth -= damage;
 
