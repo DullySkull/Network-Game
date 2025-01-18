@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 4608337063586753135}
   - component: {fileID: 7440157037956754480}
   - component: {fileID: 3930399344649813664}
+  - component: {fileID: 4343436109613030994}
   m_Layer: 0
   m_Name: PlayerShooter
   m_TagString: Player
@@ -339,7 +340,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4224950169913128239}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c64ff641aa6596b4ebf26c7a273967fb, type: 3}
   m_Name: 
@@ -377,6 +378,36 @@ MonoBehaviour:
   bulletPrefab: {fileID: 259405293249039411, guid: 6b08489db0d67fe4fb25b9d4d528f178, type: 3}
   bulletSpawn: {fileID: 8258652073352978461}
   maxBullets: 25
+--- !u!114 &4343436109613030994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4224950169913128239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &4866651013584550422
 GameObject:
   m_ObjectHideFlags: 0
