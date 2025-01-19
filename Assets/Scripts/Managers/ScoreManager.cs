@@ -1,20 +1,27 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 public class ScoreManager : NetworkBehaviour
 {
-    private NetworkVariable<int> playerScore = new NetworkVariable<int>();
+    private Dictionary<ulong, int> playerScores = new Dictionary<ulong, int>();
 
-    public void AddScore()
+    public void AddScore(ulong playerId, int points)
     {
-        if (IsServer)
+        if (!IsServer) return;
+
+        if (!playerScores.ContainsKey(playerId))
         {
-            playerScore.Value++;
+            playerScores[playerId] = 0;
         }
+
+        playerScores[playerId] += points;
+        UpdateScoreClientRpc(playerId, playerScores[playerId]);
     }
 
-    public int GetScore()
+    [ClientRpc]
+    private void UpdateScoreClientRpc(ulong playerId, int newScore)
     {
-        return playerScore.Value;
+        Debug.Log($"Player {playerId} Score: {newScore}");
     }
 }

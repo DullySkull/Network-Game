@@ -201,7 +201,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 97905033}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 296628172}
+        m_TargetAssemblyTypeName: NetworkManagerUI, Assembly-CSharp
+        m_MethodName: OnHostClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &97905033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,9 +308,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  hostButton: {fileID: 97905032}
-  clientButton: {fileID: 2021462756}
-  serverButton: {fileID: 1625685585}
 --- !u!4 &296628173
 Transform:
   m_ObjectHideFlags: 0
@@ -1351,6 +1360,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c485b5338b75d442840772c65f7e3a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  chatMessagePrefab: {fileID: 0}
+  chatContent: {fileID: 0}
+  chatInput: {fileID: 0}
+  playerName: 
 --- !u!4 &1302561916
 Transform:
   m_ObjectHideFlags: 0
@@ -1422,6 +1436,7 @@ MonoBehaviour:
     NetworkTopology: 0
     UseCMBService: 0
     AutoSpawnPlayerPrefabClientSide: 1
+    NetworkMessageMetrics: 1
     NetworkProfilingMetrics: 1
     OldPrefabList: []
   RunInBackground: 1
@@ -2011,7 +2026,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1625685586}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 296628172}
+        m_TargetAssemblyTypeName: NetworkManagerUI, Assembly-CSharp
+        m_MethodName: OnServerClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1625685586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2275,7 +2302,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2021462757}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 296628172}
+        m_TargetAssemblyTypeName: NetworkManagerUI, Assembly-CSharp
+        m_MethodName: OnClientClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2021462757
 MonoBehaviour:
   m_ObjectHideFlags: 0

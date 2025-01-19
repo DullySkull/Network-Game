@@ -18,9 +18,10 @@ GameObject:
   - component: {fileID: 5122984971136083558}
   - component: {fileID: 1917414932115769938}
   - component: {fileID: 2545745754787252350}
+  - component: {fileID: 8808417753012052226}
   m_Layer: 0
   m_Name: PlayerTag
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -242,14 +243,24 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5354910571551264082}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e831789a84b1e24c820ed63852b1f03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  TaggedPlayerId:
+  ItPlayerId:
     m_InternalValue: 0
-  defaultMaterial: {fileID: 2100000, guid: 1c49829a6b5f5eb4298c3f76ec8dd3d7, type: 2}
-  taggedMaterial: {fileID: 2100000, guid: 4c57d40baa15744408dba89c910384d5, type: 2}
-  emoteEffectPrefab: {fileID: 0}
+--- !u!114 &8808417753012052226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5354910571551264082}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d99b9895fe4822b4b8f693fa30e0a119, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1

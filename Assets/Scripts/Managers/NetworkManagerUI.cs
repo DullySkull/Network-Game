@@ -25,6 +25,10 @@ public class NetworkManagerUI : NetworkBehaviour
         {
             NetworkManager.Singleton.Shutdown();
         }
+        else if (NetworkManager.Singleton.IsServer)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
         else if (NetworkManager.Singleton.IsClient)
         {
             NetworkManager.Singleton.Shutdown();

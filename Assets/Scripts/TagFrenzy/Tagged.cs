@@ -4,55 +4,77 @@ using System.Collections;
 
 public class Tagged : NetworkBehaviour
 {
-    public NetworkVariable<ulong> TaggedPlayerId = new NetworkVariable<ulong>();
-    private Renderer playerRenderer;
-    public Material defaultMaterial;
-    public Material taggedMaterial;
-    public GameObject emoteEffectPrefab;
-
-    private GameManager gameManager;
+    public NetworkVariable<ulong> ItPlayerId = new NetworkVariable<ulong>();
+    private bool isOnCooldown = false;
+    private float lastTagTime = -1f;
 
     private void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
-        playerRenderer = GetComponentInChildren<Renderer>();
-        TaggedPlayerId.OnValueChanged += OnTaggedPlayerChanged;
-    }
-
-    private void OnTaggedPlayerChanged(ulong oldValue, ulong newValue)
-    {
-        if (newValue == OwnerClientId)
+        // Debug: Register a callback to track ItPlayerId changes
+        ItPlayerId.OnValueChanged += (oldValue, newValue) =>
         {
-            UpdateMaterialClientRpc(true);
-
-            if (emoteEffectPrefab)
-            {
-                Instantiate(emoteEffectPrefab, transform.position + Vector3.up * 2, Quaternion.identity);
-            }
-        }
-        else
-        {
-            UpdateMaterialClientRpc(false);
-        }
+            Debug.Log($"[Tagged] ItPlayerId changed: Old = {oldValue}, New = {newValue}");
+            UpdatePlayerColorsClientRpc(newValue);
+        };
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!gameManager.GameStarted.Value || !IsServer || TaggedPlayerId.Value != OwnerClientId) return;
+        if (!IsServer) return;
 
+        // Debug: Log collision details
+        Debug.Log($"[Tagged] Collision detected: {gameObject.name} collided with {collision.gameObject.name}");
+
+        // Ensure the current player is "It" and not on cooldown
+        if (ItPlayerId.Value != OwnerClientId)
+        {
+            Debug.Log($"[Tagged] This player is not 'It'. Current 'It': {ItPlayerId.Value}");
+            return;
+        }
+
+        if (isOnCooldown)
+        {
+            Debug.Log("[Tagged] Cooldown active. Cannot tag yet.");
+            return;
+        }
+
+        // Check if the collided object is another player
         NetworkObject otherPlayer = collision.gameObject.GetComponent<NetworkObject>();
         if (otherPlayer != null && otherPlayer.OwnerClientId != OwnerClientId)
         {
-            TaggedPlayerId.Value = otherPlayer.OwnerClientId;
+            ItPlayerId.Value = otherPlayer.OwnerClientId;
+            Debug.Log($"[Tagged] Tagging player {otherPlayer.OwnerClientId}");
+            UpdatePlayerColorsClientRpc(ItPlayerId.Value);
+            StartCoroutine(StartCooldown());
+            lastTagTime = Time.time;
         }
     }
 
     [ClientRpc]
-    private void UpdateMaterialClientRpc(bool isIt)
+    private void UpdatePlayerColorsClientRpc(ulong itPlayerId)
     {
-        if (playerRenderer != null)
+        foreach (var player in FindObjectsOfType<Movement>())
         {
-            playerRenderer.material = isIt ? taggedMaterial : defaultMaterial;
+            Renderer renderer = player.GetComponentInChildren<Renderer>();
+            if (renderer != null)
+            {
+                if (player.OwnerClientId == itPlayerId)
+                {
+                    renderer.material.color = Color.red;
+                }
+                else
+                {
+                    renderer.material.color = Color.white;
+                }
+            }
         }
+    }
+
+    private IEnumerator StartCooldown()
+    {
+        isOnCooldown = true;
+        yield return new WaitForSeconds(3f);
+        isOnCooldown = false;
+        Debug.Log("[Tagged] Cooldown ended. Player can tag again.");
     }
 }

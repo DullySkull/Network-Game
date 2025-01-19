@@ -6,51 +6,37 @@ using TMPro;
 
 public class ChatManager : NetworkBehaviour
 {
-    public static ChatManager Singleton;
+    public TMP_InputField chatInput;
+    public TMP_Text chatDisplay;
 
-    [SerializeField] ChatMessage chatMessagePrefab;
-    [SerializeField] CanvasGroup chatContent;
-    [SerializeField] TMP_InputField chatInput;
-
-    public string playerName;
-
-    void Awake() 
-    { 
-        ChatManager.Singleton = this; 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) && chatInput.isFocused)
+        {
+            SendChatMessage();
+        }
     }
 
-    void Update() 
+    private void SendChatMessage()
     {
-        if(Input.GetKeyDown(KeyCode.Return))
+        string message = chatInput.text.Trim();
+        if (!string.IsNullOrEmpty(message))
         {
-            SendChatMessage(chatInput.text, playerName);
+            SendChatMessageServerRpc(message, OwnerClientId);
             chatInput.text = "";
         }
     }
 
-    public void SendChatMessage(string chatmessage, string playerID = null)
-    { 
-        if(string.IsNullOrEmpty(chatmessage)) return;
-
-        string sent = playerID + ": " +  chatmessage;
-        SendChatMessageServerRpc(sent); 
-    }
-   
-    void AddMessage(string msg)
-    {
-        ChatMessage chatMessage = Instantiate(chatMessagePrefab);
-        chatMessage.SetText(msg);
-    }
-
     [ServerRpc(RequireOwnership = false)]
-    void SendChatMessageServerRpc(string message)
+    private void SendChatMessageServerRpc(string message, ulong senderId)
     {
-        ReceiveChatMessageClientRpc(message);
+        string formattedMessage = $"Player {senderId}: {message}";
+        ReceiveChatMessageClientRpc(formattedMessage);
     }
 
     [ClientRpc]
-    void ReceiveChatMessageClientRpc(string message)
+    private void ReceiveChatMessageClientRpc(string message)
     {
-        ChatManager.Singleton.AddMessage(message);
+        chatDisplay.text += message + "\n";
     }
 }
