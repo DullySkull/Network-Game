@@ -36,8 +36,11 @@ namespace StarterAssets
         [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
 
+        [Tooltip("Depth of the water so it can swim")]
+        public float WaterHeight = 15.5f;
+
         [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-        public float Gravity = -15.0f;
+        public float Gravity = -9.81f;
 
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -86,6 +89,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
+
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -159,6 +163,7 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+            CheckForWaterHeight();
         }
 
         private void LateUpdate()
@@ -187,6 +192,17 @@ namespace StarterAssets
             if (_hasAnimator)
             {
                 _animator.SetBool(_animIDGrounded, Grounded);
+            }
+        }
+        void CheckForWaterHeight()
+        {
+            if (transform.position.y < WaterHeight)
+            {
+                Gravity = 0f;
+            }
+            else
+            {
+                Gravity = -9.8f;
             }
         }
 
