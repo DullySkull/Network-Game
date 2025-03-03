@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tag Frenzy.unity
     guid: 9f917614e17949d4d876ff5f18248317
+  - enabled: 1
+    path: Assets/Scenes/ZombieShooter.unity
+    guid: 595720312d6dd524da881298ade34b91
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: a28ac851ce67d5742b38986832fba2eb, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
