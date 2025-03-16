@@ -1,123 +1,92 @@
-using System.Collections;
-using TMPro;
-using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class GameManager : NetworkBehaviour
+public class GameManager : MonoBehaviour
 {
-    public TextMeshProUGUI countdownText;
-    public GameObject startButton;
-    public GameObject countdownTextObject;
+    public enum GameState { Playing, Paused, GameOver }
+    public GameState currentState = GameState.Playing;
 
-    public NetworkVariable<bool> GameStarted = new NetworkVariable<bool>(false);
-    public NetworkVariable<ulong> TaggedPlayerId = new NetworkVariable<ulong>();
-    private bool isOnCooldown = false;
+    public GameObject pauseMenuUI;
+    public GameObject gameOverUI;
 
-    private void Start()
+    void Start()
     {
-        if (IsServer)
+        SetState(GameState.Playing);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TaggedPlayerId.OnValueChanged += OnTaggedPlayerChanged;
-        }
-    }
-
-    public void StartGame()
-    {
-        if (IsServer)
-        {
-            // Randomly select a player to be "It"
-            ulong randomPlayerId = NetworkManager.Singleton.ConnectedClientsIds[
-                Random.Range(0, NetworkManager.Singleton.ConnectedClientsIds.Count)
-            ];
-            TaggedPlayerId.Value = randomPlayerId;
-
-            StartCoroutine(StartGameCountdown());
-        }
-        else
-        {
-            RequestStartGameServerRpc();
-        }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void RequestStartGameServerRpc()
-    {
-        StartGame();
-    }
-
-    private IEnumerator StartGameCountdown()
-    {
-        float countdown = 5f;
-
-        while (countdown > 0)
-        {
-            UpdateCountdownClientRpc(Mathf.CeilToInt(countdown));
-            countdown -= Time.deltaTime;
-            yield return null;
-        }
-
-        GameStarted.Value = true;
-
-        UpdateCountdownClientRpc(0);
-        countdownTextObject.SetActive(false);
-    }
-
-    [ClientRpc]
-    private void UpdateCountdownClientRpc(int countdownValue)
-    {
-        countdownText.text = countdownValue > 0 ? $"Game starts in: {countdownValue}" : "";
-    }
-
-    private void OnTaggedPlayerChanged(ulong oldValue, ulong newValue)
-    {
-        Debug.Log($"[GameManager] Tagged player changed: Old = {oldValue}, New = {newValue}");
-        UpdatePlayerColorsClientRpc(newValue);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!IsServer || !GameStarted.Value) return;
-
-        // Ensure the current player is "It" and not on cooldown
-        if (TaggedPlayerId.Value != OwnerClientId || isOnCooldown) return;
-
-        // Check if the collided object is another player
-        NetworkObject otherPlayer = collision.gameObject.GetComponent<NetworkObject>();
-        if (otherPlayer != null && otherPlayer.OwnerClientId != OwnerClientId)
-        {
-            TaggedPlayerId.Value = otherPlayer.OwnerClientId;
-            Debug.Log($"[GameManager] Player {otherPlayer.OwnerClientId} is now 'It'!");
-
-            // Start cooldown for tagging
-            StartCoroutine(StartCooldown());
-        }
-    }
-
-    [ClientRpc]
-    private void UpdatePlayerColorsClientRpc(ulong itPlayerId)
-    {
-        foreach (var player in FindObjectsOfType<Movement>())
-        {
-            Renderer renderer = player.GetComponentInChildren<Renderer>();
-            if (renderer != null)
+            if (currentState == GameState.Playing)
             {
-                if (player.OwnerClientId == itPlayerId)
-                {
-                    renderer.material.color = Color.red; // "It" player
-                }
-                else
-                {
-                    renderer.material.color = Color.white; // Non-"It" players
-                }
+                PauseGame();
+            }
+            else if (currentState == GameState.Paused)
+            {
+                ResumeGame();
             }
         }
     }
 
-    private IEnumerator StartCooldown()
+    public void SetState(GameState newState)
     {
-        isOnCooldown = true;
-        yield return new WaitForSeconds(3f);
-        isOnCooldown = false;
-        Debug.Log("[GameManager] Cooldown ended. Player can tag again.");
+        currentState = newState;
+        switch (newState)
+        {
+            case GameState.Playing:
+                Time.timeScale = 1f;
+                if (pauseMenuUI != null)
+                    pauseMenuUI.SetActive(false);
+                if (gameOverUI != null)
+                    gameOverUI.SetActive(false);
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                break;
+            case GameState.Paused:
+                Time.timeScale = 0f;
+                if (pauseMenuUI != null)
+                    pauseMenuUI.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                break;
+            case GameState.GameOver:
+                Time.timeScale = 0f;
+                if (gameOverUI != null)
+                    gameOverUI.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                break;
+        }
+    }
+
+    public void PauseGame()
+    {
+        SetState(GameState.Paused);
+    }
+
+    public void ResumeGame()
+    {
+        SetState(GameState.Playing);
+    }
+
+    public void GameOver()
+    {
+        SetState(GameState.GameOver);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

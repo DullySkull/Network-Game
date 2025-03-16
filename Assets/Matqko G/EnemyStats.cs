@@ -30,6 +30,11 @@ public class EnemyStats : MonoBehaviour
 
     void Die()
     {
+        if(ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.AddScore();
+        }
+
         Destroy(gameObject);
     }
 

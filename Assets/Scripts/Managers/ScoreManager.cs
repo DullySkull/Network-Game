@@ -1,27 +1,48 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScoreManager : NetworkBehaviour
 {
-    private Dictionary<ulong, int> playerScores = new Dictionary<ulong, int>();
+    public static ScoreManager Instance { get; private set; }
 
-    public void AddScore(ulong playerId, int points)
+    [Header("Score")] 
+    public int score = 0;
+
+    [Header("Score UI")]
+    public TextMeshProUGUI scoreText;
+
+    private void Awake()
     {
-        if (!IsServer) return;
-
-        if (!playerScores.ContainsKey(playerId))
+        if(Instance == null)
         {
-            playerScores[playerId] = 0;
+            Instance = this;
         }
-
-        playerScores[playerId] += points;
-        UpdateScoreClientRpc(playerId, playerScores[playerId]);
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    [ClientRpc]
-    private void UpdateScoreClientRpc(ulong playerId, int newScore)
+    private void Start()
     {
-        Debug.Log($"Player {playerId} Score: {newScore}");
+        UpdateScoreText();
     }
+
+    void UpdateScoreText()
+    {
+        if(scoreText != null)
+        {
+            scoreText.text = "Score: " + score;
+        }
+    }
+
+    public void AddScore()
+    {
+        score ++;
+        UpdateScoreText();
+    }
+
 }
