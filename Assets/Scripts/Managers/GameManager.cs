@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 public class GameManager : MonoBehaviour
 {
@@ -87,6 +88,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void StartHost()
+    {
+        NetworkManager.Singleton.StartHost();
+        SetState(GameState.Playing);
+    }
+
+    public void StartServer()
+    {
+        NetworkManager.Singleton.StartServer();
+        SetState(GameState.Playing);
+    }
+
+    public void StartClient()
+    {
+        NetworkManager.Singleton.StartClient();
+        SetState(GameState.Playing);
+    }
+
     public void PauseGame()
     {
         SetState(GameState.Paused);
@@ -115,5 +134,11 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        if(NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.Shutdown();
+            Destroy(NetworkManager.Singleton.gameObject);
+        }
     }
 }
