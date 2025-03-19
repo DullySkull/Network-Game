@@ -21,6 +21,10 @@ public class EnemyAI : MonoBehaviour
         {
             agent.SetDestination(target.position);
         }
+        else
+        {
+            Debug.Log("Agent is null");
+        }
     }
 
     private void OnTriggerEnter(Collider other)
