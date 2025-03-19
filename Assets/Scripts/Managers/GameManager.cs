@@ -3,29 +3,35 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameState { Playing, Paused, GameOver }
-    public GameState currentState = GameState.Playing;
+    public enum GameState { MainMenu, Playing, Paused, GameOver }
+    public GameState currentState = GameState.MainMenu;
 
     public GameObject pauseMenuUI;
     public GameObject gameOverUI;
+    public GameObject playingUI;
+    public GameObject mainMenuUI;
 
     void Start()
     {
-        SetState(GameState.Playing);
+        SetState(GameState.MainMenu);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (GameState.MainMenu != currentState)
         {
-            if (currentState == GameState.Playing)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                PauseGame();
+                if (currentState == GameState.Playing)
+                {
+                    PauseGame();
+                }
+                else if (currentState == GameState.Paused)
+                {
+                    ResumeGame();
+                }
             }
-            else if (currentState == GameState.Paused)
-            {
-                ResumeGame();
-            }
+
         }
     }
 
@@ -34,12 +40,29 @@ public class GameManager : MonoBehaviour
         currentState = newState;
         switch (newState)
         {
-            case GameState.Playing:
-                Time.timeScale = 1f;
+            case GameState.MainMenu:
+                Time.timeScale = 0f;
+                if (mainMenuUI != null)
+                    mainMenuUI.SetActive(true);
                 if (pauseMenuUI != null)
                     pauseMenuUI.SetActive(false);
                 if (gameOverUI != null)
                     gameOverUI.SetActive(false);
+                if (playingUI != null)
+                    playingUI.SetActive(false);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                break;
+            case GameState.Playing:
+                Time.timeScale = 1f;
+                if (mainMenuUI != null)
+                    mainMenuUI.SetActive(false);
+                if (pauseMenuUI != null)
+                    pauseMenuUI.SetActive(false);
+                if (gameOverUI != null)
+                    gameOverUI.SetActive(false);
+                if (playingUI != null)
+                    playingUI.SetActive(true);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
                 break;
@@ -47,6 +70,8 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0f;
                 if (pauseMenuUI != null)
                     pauseMenuUI.SetActive(true);
+                if (playingUI != null)
+                    playingUI.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 break;
@@ -54,6 +79,8 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0f;
                 if (gameOverUI != null)
                     gameOverUI.SetActive(true);
+                if (playingUI != null)
+                    playingUI.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 break;
