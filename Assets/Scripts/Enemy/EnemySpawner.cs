@@ -2,77 +2,49 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : NetworkBehaviour
 {
     public GameObject enemyPrefab;
     public Transform[] spawnPoints;
-    public float spawnInterval = 5;
+    public float spawnInterval = 5f;
     public int maxEnemies = 30;
-    private int currentEnemyCount = 0;
-    private EnemyAI enemyAI;
 
-    private void Start()
+    private int currentEnemyCount = 0;
+
+    public override void OnNetworkSpawn()
     {
-        EnemyAI enemyAI = GetComponent<EnemyAI>();
-        StartCoroutine(SpawnEnemies());
+        if (IsServer)
+            StartCoroutine(SpawnEnemies());
     }
+
     private IEnumerator SpawnEnemies()
     {
         while (true)
         {
             yield return new WaitForSeconds(spawnInterval);
-
             if (currentEnemyCount < maxEnemies)
-            {
                 SpawnEnemy();
-            }
         }
     }
 
     private void SpawnEnemy()
     {
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
-
+        var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        var enemyGO = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+        var netObj = enemyGO.GetComponent<NetworkObject>();
+        netObj.Spawn();
         currentEnemyCount++;
 
-        if (enemyAI != null)
-        {
-            enemyAI.OnEnemyDestroyed += EnemyDestroyed;
-        }
+        var health = enemyGO.GetComponent<Health>();
+        if (health != null)
+            health.OnDeath += EnemyDestroyed;
     }
 
     private void EnemyDestroyed()
     {
         currentEnemyCount--;
+        ScoreManager.Instance.AddScore();
+        if (currentEnemyCount <= 0)
+            GameManager.Instance.WinGame();
     }
-
-    //public override void OnNetworkSpawn()
-    //{
-    //    if(IsServer)
-    //    {
-    //        StartCoroutine(SpawnEnemies());
-    //    }
-    //    base.OnNetworkSpawn();
-    //}
-
-    //IEnumerator SpawnEnemies()
-    //{
-    //    yield return new WaitForSeconds(spawnInterval);
-
-    //    if (currentEnemyCount < maxEnemies)
-    //    {
-    //        SpawnEnemyServerRpc();
-    //    }
-    //}
-
-    //[ServerRpc]
-    //void SpawnEnemyServerRpc()
-    //{
-    //    Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-    //    GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
-    //    enemy.GetComponent<NetworkObject>().Spawn();
-
-    //    currentEnemyCount++;
-    //}
 }

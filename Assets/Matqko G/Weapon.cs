@@ -1,8 +1,9 @@
 using TMPro;
 using UnityEngine;
+using Unity.Netcode;
 using System.Collections;
 
-public class Weapon : MonoBehaviour
+public class Weapon : NetworkBehaviour
 {
     [SerializeField] public GameObject bulletPrefab;
     public Transform firePoint;
@@ -24,72 +25,34 @@ public class Weapon : MonoBehaviour
         UpdateBulletCount();
     }
 
-
-
-
     void Update()
     {
-
-        if (reloading)
-            return;
-
-        if (currentBullets <= 0 || Input.GetKeyDown(KeyCode.R))
-        {
+        if (!IsOwner) return;
+        if (reloading) return;
+        if ((currentBullets <= 0 || Input.GetKeyDown(KeyCode.R)) && !reloading)
             StartCoroutine(Reload());
-            return;
-        }
-
-
         if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
-
         {
-            Shoot();
-
             nextFireTime = Time.time + fireRate;
-
+            ShootServerRpc();
         }
     }
 
-
-
-    void Shoot()
+    [ServerRpc]
+    private void ShootServerRpc(ServerRpcParams rpcParams = default)
     {
-
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-        Vector3 targetPoint;
-        RaycastHit hit;
-
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            targetPoint = hit.point;
-        }
-        else
-        {
-            targetPoint = ray.GetPoint(1000);
-        }
-
-
-        Vector3 direction = (targetPoint - firePoint.position).normalized;
-
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.LookRotation(direction));
-        Rigidbody rb = bullet.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = direction * bulletSpeed;
-        }
-
-        currentBullets -= 1;
-        UpdateBulletCount();
-
-        if (shootSound != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(shootSound);
-        }
-
-
+        currentBullets--;
+        UpdateBulletCountClientRpc(currentBullets);
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        bullet.GetComponent<NetworkObject>().Spawn();
     }
 
+    [ClientRpc]
+    private void UpdateBulletCountClientRpc(int newCount)
+    {
+        currentBullets = newCount;
+        UpdateBulletCount();
+    }
 
     IEnumerator Reload()
     {
@@ -101,17 +64,11 @@ public class Weapon : MonoBehaviour
         UpdateBulletCount();
     }
 
-
     void UpdateBulletCount()
     {
-
         if (bulletCount != null)
         {
             bulletCount.text = $"{currentBullets} / {maxBullets}";
         }
-
     }
-
-
-
 }

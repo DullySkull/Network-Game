@@ -1,3 +1,4 @@
+using System.Globalization;
 using UnityEngine;
 using Unity.Netcode.Components;
 using UnityEngine.InputSystem.XR;
@@ -100,24 +101,15 @@ namespace StarterAssets
 
         public override void OnNetworkSpawn()
         {
-            if (!IsOwner)
+            if (CinemachineCameraTarget != null)
             {
-                if (playerInput != null) playerInput.enabled = false;
-                if (input != null) input.enabled = false;
-                if (controller != null) controller.enabled = false;
-                if (CinemachineCameraTarget != null) CinemachineCameraTarget.SetActive(false);
-
-                enabled = false;
+                CinemachineCameraTarget.SetActive(IsOwner);
             }
-            else
-            {
-                if (playerInput != null) playerInput.enabled = true;
-                if (input != null) input.enabled = true;
-                if (controller != null) controller.enabled = true;
-                if (CinemachineCameraTarget != null) CinemachineCameraTarget.SetActive(true);
-
-                enabled = true;
-            }
+            
+            #if ENABLE_INPUT_SYSTEM
+            if(playerInput != null) playerInput.enabled = IsOwner;
+            #endif
+            if (input != null) input.enabled = IsOwner;
         }
 
         private void Start()

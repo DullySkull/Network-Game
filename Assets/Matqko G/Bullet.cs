@@ -1,22 +1,31 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class Bullet : MonoBehaviour
+public class Bullet : NetworkBehaviour
 {
-
     [SerializeField] public float lifeTime = 5;
-    [SerializeField] public float damage = 50f;
+    [SerializeField] public int damage = 50;
 
-
-    void Start()
+    private void Start()
     {
-        Destroy(gameObject, lifeTime);
+        if (IsServer)
+            Destroy(gameObject, lifeTime);
     }
 
-
-
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
+        if (!IsServer) return;
+        if (other.CompareTag("Enemy"))
+        {
+            var h = other.GetComponent<Health>();
+            if (h != null) h.TakeDamage(damage);
+            GetComponent<NetworkObject>().Despawn();
+        }
+    }
+}
 
+    /*void OnTriggerEnter(Collider other)
+    {
         if (other.CompareTag("Enemy"))
         {
             EnemyStats enemy = other.GetComponent<EnemyStats>();
@@ -24,12 +33,6 @@ public class Bullet : MonoBehaviour
             {
                 enemy.TakeDamage(damage);
             }
-
             Destroy(gameObject);
         }
-
-    }
-
-
-
-}
+    }*/

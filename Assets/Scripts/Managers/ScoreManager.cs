@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using TMPro;
 using Unity.Netcode;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ScoreManager : NetworkBehaviour
 {
@@ -10,39 +8,44 @@ public class ScoreManager : NetworkBehaviour
 
     [Header("Score")] 
     public int score = 0;
-
     [Header("Score UI")]
     public TextMeshProUGUI scoreText;
 
+    private NetworkVariable<int> networkScore = new NetworkVariable<int>();
+
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        else Destroy(gameObject);
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        UpdateScoreText();
+        networkScore.OnValueChanged += (oldVal, newVal) => UpdateScoreText(newVal);
+        UpdateScoreText(networkScore.Value);
     }
 
-    void UpdateScoreText()
+    private void UpdateScoreText(int newScore)
     {
-        if(scoreText != null)
-        {
-            scoreText.text = "Score: " + score;
-        }
+        if (scoreText != null)
+            scoreText.text = "Score: " + newScore;
     }
 
     public void AddScore()
     {
-        score ++;
-        UpdateScoreText();
+        if (IsServer)
+            networkScore.Value++;
+        else
+            AddScoreServerRpc();
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void AddScoreServerRpc()
+    {
+        networkScore.Value++;
+    }
 }

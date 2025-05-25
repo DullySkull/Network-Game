@@ -2,125 +2,163 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
-    public enum GameState { MainMenu, Playing, Paused, GameOver }
+    public enum GameState
+    {
+        MainMenu,
+        Playing,
+        Paused,
+        GameOver,
+        Win
+    }
+
     public GameState currentState = GameState.MainMenu;
+
+    public static GameManager Instance { get; private set; }
 
     public GameObject pauseMenuUI;
     public GameObject gameOverUI;
+    public GameObject winUI;
     public GameObject playingUI;
     public GameObject mainMenuUI;
 
-    void Start()
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        SetState(GameState.MainMenu);
+        
+        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+    }
+    
+    private void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnected;
+        }
+    }
+
+    private void Start()
     {
         SetState(GameState.MainMenu);
     }
 
-    void Update()
+    private void Update()
     {
-        if (GameState.MainMenu != currentState)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (currentState == GameState.Playing)
-                {
-                    PauseGame();
-                }
-                else if (currentState == GameState.Paused)
-                {
-                    ResumeGame();
-                }
-            }
-
+            if (currentState == GameState.Playing) PauseGame();
+            else if (currentState == GameState.Paused) ResumeGame();
         }
     }
-
+    
+    private void HandleClientConnected(ulong clientId)
+    {
+        if (!IsServer && clientId == NetworkManager.Singleton.LocalClientId)
+        {
+            SetState(GameState.Playing);
+        }
+    }
+    
     public void SetState(GameState newState)
     {
         currentState = newState;
-        switch (newState)
-        {
-            case GameState.MainMenu:
-                Time.timeScale = 0f;
-                if (mainMenuUI != null)
-                    mainMenuUI.SetActive(true);
-                if (pauseMenuUI != null)
-                    pauseMenuUI.SetActive(false);
-                if (gameOverUI != null)
-                    gameOverUI.SetActive(false);
-                if (playingUI != null)
-                    playingUI.SetActive(false);
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                break;
-            case GameState.Playing:
-                Time.timeScale = 1f;
-                if (mainMenuUI != null)
-                    mainMenuUI.SetActive(false);
-                if (pauseMenuUI != null)
-                    pauseMenuUI.SetActive(false);
-                if (gameOverUI != null)
-                    gameOverUI.SetActive(false);
-                if (playingUI != null)
-                    playingUI.SetActive(true);
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-                break;
-            case GameState.Paused:
-                Time.timeScale = 0f;
-                if (pauseMenuUI != null)
-                    pauseMenuUI.SetActive(true);
-                if (playingUI != null)
-                    playingUI.SetActive(false);
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                break;
-            case GameState.GameOver:
-                Time.timeScale = 0f;
-                if (gameOverUI != null)
-                    gameOverUI.SetActive(true);
-                if (playingUI != null)
-                    playingUI.SetActive(false);
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                break;
-        }
-    }
+        Time.timeScale = (newState == GameState.Playing) ? 1f : 0f;
 
+        mainMenuUI?.SetActive(newState == GameState.MainMenu);
+        playingUI?.SetActive(newState == GameState.Playing);
+        pauseMenuUI?.SetActive(newState == GameState.Paused);
+        gameOverUI?.SetActive(newState == GameState.GameOver);
+        winUI?.SetActive(newState == GameState.Win);
+
+        Cursor.lockState = (newState == GameState.Playing)
+            ? CursorLockMode.Locked
+            : CursorLockMode.None;
+        Cursor.visible = newState != GameState.Playing;
+    }
+    
+    // networked start
     public void StartHost()
     {
         NetworkManager.Singleton.StartHost();
-        SetState(GameState.Playing);
+        OnClientConnected();
     }
-
+    
     public void StartServer()
     {
         NetworkManager.Singleton.StartServer();
-        SetState(GameState.Playing);
+        OnClientConnected();
     }
-
+    
     public void StartClient()
     {
         NetworkManager.Singleton.StartClient();
         SetState(GameState.Playing);
     }
-
-    public void PauseGame()
-    {
-        SetState(GameState.Paused);
-    }
-
-    public void ResumeGame()
+    
+    private void OnClientConnected()
     {
         SetState(GameState.Playing);
     }
-
+    
+    // pause sync
+    public void PauseGame()
+    {
+        SetState(GameState.Paused);
+        if (IsServer) PauseGameClientRpc();
+        else PauseGameRequestServerRpc();
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    private void PauseGameRequestServerRpc() => PauseGameClientRpc();
+    
+    [ClientRpc]
+    private void PauseGameClientRpc() => SetState(GameState.Paused);
+    
+    // resume sync
+    public void ResumeGame()
+    {
+        SetState(GameState.Playing);
+        if (IsServer) ResumeGameClientRpc();
+        else ResumeGameRequestServerRpc();
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    private void ResumeGameRequestServerRpc() => ResumeGameClientRpc();
+    
+    [ClientRpc]
+    private void ResumeGameClientRpc() => SetState(GameState.Playing);
+    
+    // game over sync
     public void GameOver()
     {
         SetState(GameState.GameOver);
+        if (IsServer) GameOverClientRpc();
     }
-
+    
+    [ClientRpc]
+    private void GameOverClientRpc() => SetState(GameState.GameOver);
+    
+    // win sync
+    public void WinGame()
+    {
+        SetState(GameState.Win);
+        if (IsServer) WinGameClientRpc();
+    }
+    
+    [ClientRpc]
+    private void WinGameClientRpc() => SetState(GameState.Win);
+    
     public void QuitGame()
     {
         Application.Quit();
@@ -128,17 +166,16 @@ public class GameManager : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
-
-
+    
     public void RestartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
-        if(NetworkManager.Singleton != null)
+        if (NetworkManager.Singleton != null)
         {
             NetworkManager.Singleton.Shutdown();
             Destroy(NetworkManager.Singleton.gameObject);
         }
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
