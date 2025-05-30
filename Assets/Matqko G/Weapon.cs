@@ -5,8 +5,8 @@ using System.Collections;
 
 public class Weapon : NetworkBehaviour
 {
-    [SerializeField] public GameObject bulletPrefab;
-    public Transform firePoint;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Transform firePoint;
     [SerializeField] public float bulletSpeed = 20f;
     [SerializeField] public float fireRate = 0.2f;
     public float nextFireTime = 0;
@@ -14,7 +14,9 @@ public class Weapon : NetworkBehaviour
     public int currentBullets = 30;
     private bool reloading = false;
     private float reloadTime = 1.5f;
-    [SerializeField] TextMeshProUGUI bulletCount;
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private float maxAimDistance = 1000f;
+    //[SerializeField] TextMeshProUGUI bulletCount;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip shootSound;
     [SerializeField] AudioClip reloadSound;
@@ -31,20 +33,44 @@ public class Weapon : NetworkBehaviour
         if (reloading) return;
         if ((currentBullets <= 0 || Input.GetKeyDown(KeyCode.R)) && !reloading)
             StartCoroutine(Reload());
+
         if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
-            ShootServerRpc();
+
+            Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            Ray ray = playerCamera.ScreenPointToRay(screenCenter);
+
+            Vector3 aimPoint;
+            if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance))
+                aimPoint = hit.point;
+            else
+                aimPoint = ray.GetPoint(maxAimDistance);
+
+            ShootServerRpc(aimPoint);
         }
     }
 
     [ServerRpc]
-    private void ShootServerRpc(ServerRpcParams rpcParams = default)
+    private void ShootServerRpc(Vector3 aimPoint, ServerRpcParams rpcParams = default)
     {
         currentBullets--;
         UpdateBulletCountClientRpc(currentBullets);
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        bullet.GetComponent<NetworkObject>().Spawn();
+
+        Vector3 spawnPos = firePoint.position;
+        Vector3 direction = (aimPoint - spawnPos).normalized;
+        Quaternion rot = Quaternion.LookRotation(direction);
+
+        GameObject bullet = Instantiate(bulletPrefab, spawnPos, rot);
+
+        var netObj = bullet.GetComponent<NetworkObject>();
+        netObj.SpawnWithOwnership(rpcParams.Receive.SenderClientId);
+
+        var rb = bullet.GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.linearVelocity = direction * bulletSpeed;
+
+        audioSource.PlayOneShot(shootSound);
     }
 
     [ClientRpc]
@@ -59,6 +85,7 @@ public class Weapon : NetworkBehaviour
         reloading = true;
         audioSource.PlayOneShot(reloadSound);
         yield return new WaitForSeconds(reloadTime);
+
         currentBullets = maxBullets;
         reloading = false;
         UpdateBulletCount();
@@ -66,9 +93,7 @@ public class Weapon : NetworkBehaviour
 
     void UpdateBulletCount()
     {
-        if (bulletCount != null)
-        {
-            bulletCount.text = $"{currentBullets} / {maxBullets}";
-        }
+        /*if (bulletCount != null)
+            bulletCount.text = $"{currentBullets} / {maxBullets}";*/
     }
 }

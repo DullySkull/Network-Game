@@ -6,33 +6,39 @@ public class Bullet : NetworkBehaviour
     [SerializeField] public float lifeTime = 5;
     [SerializeField] public int damage = 50;
 
-    private void Start()
+    private Rigidbody rb;
+    private void Awake()
     {
-        if (IsServer)
-            Destroy(gameObject, lifeTime);
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
     }
-
+    public override void OnNetworkSpawn()
+    {
+        if (!IsServer) return;
+        Invoke(nameof(DespawnSelf), lifeTime);
+    }
+    private void DespawnSelf()
+    {
+        if (NetworkObject != null && NetworkObject.IsSpawned)
+            NetworkObject.Despawn();
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (!IsServer) return;
         if (other.CompareTag("Enemy"))
         {
             var h = other.GetComponent<Health>();
-            if (h != null) h.TakeDamage(damage);
-            GetComponent<NetworkObject>().Despawn();
+            if (h != null)
+            {
+                h.TakeDamage(damage);
+            }
+            else
+            {
+                var es = other.GetComponent<EnemyStats>();
+                if (es != null)
+                    es.TakeDamage(damage);
+            }
+            DespawnSelf();
         }
     }
 }
-
-    /*void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            EnemyStats enemy = other.GetComponent<EnemyStats>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(damage);
-            }
-            Destroy(gameObject);
-        }
-    }*/
