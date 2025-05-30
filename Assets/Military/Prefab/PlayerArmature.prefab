@@ -6089,13 +6089,13 @@ GameObject:
   - component: {fileID: 5504259220806075267}
   - component: {fileID: 5504259220806075266}
   - component: {fileID: 1627016993570525626}
-  - component: {fileID: 4133211058128015171}
   - component: {fileID: 5504259220806075271}
   - component: {fileID: 5504259220806075270}
   - component: {fileID: 6172838630360178396}
   - component: {fileID: 8199830702598688937}
   - component: {fileID: 3263204685254280738}
   - component: {fileID: 8028486523301373622}
+  - component: {fileID: -6033533068765002573}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -6193,39 +6193,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &4133211058128015171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8819399281915773919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c64ff641aa6596b4ebf26c7a273967fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  MoveSpeed: 4
-  SprintSpeed: 10
-  RotationSmoothTime: 0.12
-  SpeedChangeRate: 10
-  JumpHeight: 1.2
-  WaterHeight: 15.5
-  Gravity: -9.81
-  JumpTimeout: 0.3
-  FallTimeout: 0.15
-  Grounded: 1
-  GroundedOffset: -0.14
-  GroundedRadius: 0.28
-  GroundLayers:
-    serializedVersion: 2
-    m_Bits: 65
-  CinemachineCameraTarget: {fileID: 8819399280780463551}
-  TopClamp: 70
-  BottomClamp: -30
-  CameraAngleOverride: 0
-  LockCameraPosition: 0
 --- !u!114 &5504259220806075271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6396,7 +6363,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkTransformExpanded: 0
-  AuthorityMode: 0
+  AuthorityMode: 1
   TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 1
@@ -6442,6 +6409,39 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   shootSound: {fileID: 8300000, guid: 02a4ab5ff1f9f7746a3ef0f2d788a942, type: 3}
   reloadSound: {fileID: 8300000, guid: 48b62cf257ec72d409285686bf309f1e, type: 3}
+--- !u!114 &-6033533068765002573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8819399281915773919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64ff641aa6596b4ebf26c7a273967fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  MoveSpeed: 5
+  SprintSpeed: 10
+  RotationSmoothTime: 0.12
+  SpeedChangeRate: 10
+  JumpHeight: 1.2
+  WaterHeight: 12
+  Gravity: -9.81
+  JumpTimeout: 0.5
+  FallTimeout: 0.15
+  Grounded: 1
+  GroundedOffset: -0.14
+  GroundedRadius: 0.28
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  CinemachineCameraTarget: {fileID: 5886763356168835905}
+  TopClamp: 70
+  BottomClamp: -30
+  CameraAngleOverride: 0
+  LockCameraPosition: 0
 --- !u!1 &8819399281982139731
 GameObject:
   m_ObjectHideFlags: 0
@@ -6919,6 +6919,14 @@ PrefabInstance:
     - target: {fileID: 2558141238811818592, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
       propertyPath: m_Name
       value: AR_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 2558141238811818592, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2684520242361571573, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1837348216
       objectReference: {fileID: 0}
     - target: {fileID: 2939591940835352794, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
       propertyPath: m_LocalPosition.x

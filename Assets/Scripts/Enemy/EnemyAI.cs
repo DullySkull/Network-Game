@@ -1,9 +1,10 @@
 using ParrelSync.NonCore;
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : NetworkBehaviour
 {
     public Transform target;
     private NavMeshAgent agent;
@@ -11,12 +12,14 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
+        if (!IsServer) return;
         agent = GetComponent<NavMeshAgent>();
         target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
     {
+        if (!IsServer) {  return; }
         if (agent != null)
         {
             agent.SetDestination(target.position);
@@ -29,6 +32,10 @@ public class EnemyAI : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!IsServer)
+        {
+            return;
+        }
         PlayerStats playerStats = other.GetComponent<PlayerStats>();
         if (other.CompareTag("Player"))
         {

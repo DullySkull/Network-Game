@@ -60,7 +60,7 @@ namespace StarterAssets
         private float fallTimeoutDelta;
 
         // Animation
-        private Animator animator;
+        private Animator animatorrr;
         private int animIDSpeed;
         private int animIDGrounded;
         private int animIDJump;
@@ -137,7 +137,7 @@ namespace StarterAssets
                 }
             }
 
-            hasAnimator = TryGetComponent(out animator);
+            hasAnimator = TryGetComponent(out animatorrr);
             AssignAnimationIDs();
 
             jumpTimeoutDelta = JumpTimeout;
@@ -148,7 +148,9 @@ namespace StarterAssets
         {
             if (!IsOwner) return;
 
-            hasAnimator = TryGetComponent(out animator);
+           // transform.position += new Vector3(input.move.x, 0, input.move.y) * Time.deltaTime;
+
+            hasAnimator = TryGetComponent(out animatorrr);
 
             JumpAndGravity();
             GroundedCheck();
@@ -186,7 +188,7 @@ namespace StarterAssets
 
             if (hasAnimator)
             {
-                animator.SetBool(animIDGrounded, Grounded);
+                animatorrr.SetBool(animIDGrounded, Grounded);
             }
         }
 
@@ -265,8 +267,8 @@ namespace StarterAssets
 
             if (hasAnimator)
             {
-                animator.SetFloat(animIDSpeed, animationBlend);
-                animator.SetFloat(animIDMotionSpeed, inputMagnitude);
+                animatorrr.SetFloat(animIDSpeed, animationBlend);
+                animatorrr.SetFloat(animIDMotionSpeed, inputMagnitude);
             }
         }
 
@@ -278,8 +280,8 @@ namespace StarterAssets
 
                 if (hasAnimator)
                 {
-                    animator.SetBool(animIDJump, false);
-                    animator.SetBool(animIDFreeFall, false);
+                    animatorrr.SetBool(animIDJump, false);
+                    animatorrr.SetBool(animIDFreeFall, false);
                 }
 
                 if (verticalVelocity < 0.0f)
@@ -293,7 +295,7 @@ namespace StarterAssets
 
                     if (hasAnimator)
                     {
-                        animator.SetBool(animIDJump, true);
+                        animatorrr.SetBool(animIDJump, true);
                     }
                 }
 
@@ -314,7 +316,7 @@ namespace StarterAssets
                 {
                     if (hasAnimator)
                     {
-                        animator.SetBool(animIDFreeFall, true);
+                        animatorrr.SetBool(animIDFreeFall, true);
                     }
                 }
 

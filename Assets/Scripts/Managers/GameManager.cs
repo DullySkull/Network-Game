@@ -37,7 +37,7 @@ public class GameManager : NetworkBehaviour
         }
         SetState(GameState.MainMenu);
         
-        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+
     }
     
     private void OnDestroy()
@@ -50,6 +50,7 @@ public class GameManager : NetworkBehaviour
 
     private void Start()
     {
+        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
         SetState(GameState.MainMenu);
     }
 

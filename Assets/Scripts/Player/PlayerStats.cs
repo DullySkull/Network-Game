@@ -41,7 +41,7 @@ public class PlayerStats : NetworkBehaviour
 
     private void UpdateUI(int newHealth)
     {
-        healthBar.value = (float)newHealth / maxHealth;
-        healthText.text = $"Health: {newHealth}/{maxHealth}";
+        //healthBar.value = (float)newHealth / maxHealth;
+        //healthText.text = $"Health: {newHealth}/{maxHealth}";
     }
 }
