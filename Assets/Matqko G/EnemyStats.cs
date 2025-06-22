@@ -38,8 +38,14 @@ public class EnemyStats : NetworkBehaviour
     private void Die()
     {
         OnDeath?.Invoke();
-        if (IsServer)
-            GetComponent<NetworkObject>().Despawn();
-        ScoreManager.Instance.AddScore();
+        if (!IsServer) return;
+        
+        GetComponent<NetworkObject>().Despawn();
+        
+        var enemySpawner = FindAnyObjectByType<EnemySpawner>();
+        if (enemySpawner != null)
+        {
+            enemySpawner.EnemyDestroyed();
+        }
     }
 }

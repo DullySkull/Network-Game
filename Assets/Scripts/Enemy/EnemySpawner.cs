@@ -35,12 +35,12 @@ public class EnemySpawner : NetworkBehaviour
         netObj.Spawn();
         currentEnemyCount++;
 
-        var health = enemyGO.GetComponent<Health>();
+        var health = enemyGO.GetComponent<EnemyStats>();
         if (health != null)
             health.OnDeath += EnemyDestroyed;
     }
 
-    private void EnemyDestroyed()
+    public void EnemyDestroyed()
     {
         currentEnemyCount--;
         ScoreManager.Instance.AddScore();
