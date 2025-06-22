@@ -62,9 +62,7 @@ public class Weapon : NetworkBehaviour
         Quaternion rot = Quaternion.LookRotation(direction);
 
         GameObject bullet = Instantiate(bulletPrefab, spawnPos, rot);
-
-        var netObj = bullet.GetComponent<NetworkObject>();
-        netObj.SpawnWithOwnership(rpcParams.Receive.SenderClientId);
+        bullet.GetComponent<NetworkObject>().Spawn();
 
         var rb = bullet.GetComponent<Rigidbody>();
         if (rb != null)

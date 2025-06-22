@@ -40,5 +40,6 @@ public class EnemyStats : NetworkBehaviour
         OnDeath?.Invoke();
         if (IsServer)
             GetComponent<NetworkObject>().Despawn();
+        ScoreManager.Instance.AddScore();
     }
 }

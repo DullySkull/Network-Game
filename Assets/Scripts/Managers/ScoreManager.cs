@@ -12,7 +12,7 @@ public class ScoreManager : NetworkBehaviour
     public TextMeshProUGUI scoreText;
 
     private NetworkVariable<int> networkScore = new NetworkVariable<int>();
-
+    
     private void Awake()
     {
         if (Instance == null)

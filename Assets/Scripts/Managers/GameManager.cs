@@ -148,7 +148,12 @@ public class GameManager : NetworkBehaviour
     }
     
     [ClientRpc]
-    private void GameOverClientRpc() => SetState(GameState.GameOver);
+    private void GameOverClientRpc()
+    {
+        SetState(GameState.GameOver);
+        gameOverUI?.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+    }
     
     // win sync
     public void WinGame()
@@ -156,9 +161,14 @@ public class GameManager : NetworkBehaviour
         SetState(GameState.Win);
         if (IsServer) WinGameClientRpc();
     }
-    
+
     [ClientRpc]
-    private void WinGameClientRpc() => SetState(GameState.Win);
+    private void WinGameClientRpc()
+    {
+        SetState(GameState.Win);
+        gameOverUI?.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+    }
     
     public void QuitGame()
     {

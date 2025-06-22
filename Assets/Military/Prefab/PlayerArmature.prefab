@@ -177,37 +177,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!1 &4335057845878191822
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7799108626861435159}
-  m_Layer: 8
-  m_Name: Firepoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7799108626861435159
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4335057845878191822}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.3071, y: -0.454, z: 1.5008}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 711222397081296995}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5886763356168835905
 GameObject:
   m_ObjectHideFlags: 0
@@ -2804,7 +2773,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7883871055664832040}
-  - {fileID: 7799108626861435159}
   m_Father: {fileID: 5504259220806075269}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8819399280797964401
@@ -6274,7 +6242,6 @@ GameObject:
   - component: {fileID: 8028486523301373622}
   - component: {fileID: -6033533068765002573}
   - component: {fileID: 2679289361169773816}
-  - component: {fileID: 3965675010677285684}
   - component: {fileID: 333821131607833073}
   m_Layer: 8
   m_Name: PlayerArmature
@@ -6573,22 +6540,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8819399281915773919}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c415e0cce27651245af9d014c0b8a07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   bulletPrefab: {fileID: 8489818951931819000, guid: 76d6965a82c700547ac9c860a6e92ca9, type: 3}
-  firePoint: {fileID: 7799108626861435159}
+  firePoint: {fileID: 8659455569007308698}
   bulletSpeed: 30
   fireRate: 0.3
   nextFireTime: 0
   maxBullets: 30
   currentBullets: 30
-  playerCamera: {fileID: 0}
+  playerCamera: {fileID: 102967705243138850}
   maxAimDistance: 1000
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 8184794062346635149}
   shootSound: {fileID: 8300000, guid: 02a4ab5ff1f9f7746a3ef0f2d788a942, type: 3}
   reloadSound: {fileID: 8300000, guid: 48b62cf257ec72d409285686bf309f1e, type: 3}
 --- !u!114 &-6033533068765002573
@@ -6639,21 +6606,6 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList: []
   m_Animator: {fileID: 5504259220806075267}
---- !u!114 &3965675010677285684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8819399281915773919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33a313f8d13cf734ebbe750009096262, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  weaponPrefab: {fileID: 1174179812436029377}
-  weaponMountPoint: {fileID: 7883871055664832040}
 --- !u!114 &333821131607833073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7189,10 +7141,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8985577385544424751, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
-      propertyPath: firePoint
-      value: 
-      objectReference: {fileID: 7799108626861435159}
-    - target: {fileID: 8985577385544424751, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 102967705243138850}
@@ -7201,19 +7149,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
---- !u!114 &1174179812436029377 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2684520242361571573, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
-  m_PrefabInstance: {fileID: 3822098949693617972}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2144089409349621742 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2939591940835352794, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
+  m_PrefabInstance: {fileID: 3822098949693617972}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &8184794062346635149 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 4944082037826154681, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
+  m_PrefabInstance: {fileID: 3822098949693617972}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8659455569007308698 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5559203681034098862, guid: 68587b2d9c60944489560cf05cdd1aaf, type: 3}
   m_PrefabInstance: {fileID: 3822098949693617972}
   m_PrefabAsset: {fileID: 0}

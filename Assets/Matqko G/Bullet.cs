@@ -39,6 +39,7 @@ public class Bullet : NetworkBehaviour
                     es.TakeDamage(damage);
             }
             DespawnSelf();
+            GetComponent<NetworkObject>().Despawn();
         }
     }
 }
