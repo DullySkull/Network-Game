@@ -22,24 +22,23 @@ public class Bullet : NetworkBehaviour
         if (NetworkObject != null && NetworkObject.IsSpawned)
             NetworkObject.Despawn();
     }
+    
     private void OnTriggerEnter(Collider other)
     {
         if (!IsServer) return;
+        
         if (other.CompareTag("Enemy"))
         {
             var h = other.GetComponent<Health>();
-            if (h != null)
-            {
-                h.TakeDamage(damage);
-            }
+            if (h != null) h.TakeDamage(damage);
             else
             {
                 var es = other.GetComponent<EnemyStats>();
-                if (es != null)
-                    es.TakeDamage(damage);
+                if (es != null) es.TakeDamage(damage);
             }
-            DespawnSelf();
-            GetComponent<NetworkObject>().Despawn();
+            
+            if (NetworkObject != null && NetworkObject.IsSpawned)
+                NetworkObject.Despawn();
         }
     }
 }

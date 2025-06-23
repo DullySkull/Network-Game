@@ -25,8 +25,7 @@ public class EnemyStats : NetworkBehaviour
     {
         currentHealth.Value = Mathf.Max(currentHealth.Value - damage, 0);
     }
-
-    // call this from your bullet/hit logic
+    
     public void TakeDamage(int damage)
     {
         if (IsServer)
