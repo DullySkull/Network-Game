@@ -6,6 +6,7 @@ using System.Collections;
 public class Weapon : NetworkBehaviour
 {
     [SerializeField] private GameObject bulletPrefab;
+    //[SerializeField] private GameObject weaponPrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] public float bulletSpeed = 20f;
     [SerializeField] public float fireRate = 0.2f;
@@ -71,12 +72,26 @@ public class Weapon : NetworkBehaviour
         audioSource.PlayOneShot(shootSound);
     }
 
+   //[ServerRpc]
+   //private void EquipWeaponServerRpc(ServerRpcParams rpcParams = default)
+   //{
+   //    var weaponInstance = Instantiate(weaponPrefab, transform);
+   //    var newObj = weaponInstance.GetComponent<NetworkObject>();
+   //    newObj.Spawn();
+   //}
+
     [ClientRpc]
     private void UpdateBulletCountClientRpc(int newCount)
     {
         currentBullets = newCount;
         UpdateBulletCount();
     }
+
+    //public override void OnNetworkSpawn()
+    //{
+    //    if (IsOwner)
+    //        EquipWeaponServerRpc();
+    //}
 
     IEnumerator Reload()
     {

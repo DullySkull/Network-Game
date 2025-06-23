@@ -428,6 +428,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   bulletPrefab: {fileID: 8489818951931819000, guid: 76d6965a82c700547ac9c860a6e92ca9, type: 3}
+  weaponPrefab: {fileID: 2558141238811818592}
   firePoint: {fileID: 5559203681034098862}
   bulletSpeed: 30
   fireRate: 0.3

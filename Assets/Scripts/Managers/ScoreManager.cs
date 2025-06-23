@@ -1,26 +1,28 @@
+using UnityEngine;
 using Unity.Netcode;
 using TMPro;
-using UnityEngine;
 
+[RequireComponent(typeof(NetworkObject))]
 public class ScoreManager : NetworkBehaviour
 {
     public static ScoreManager Instance { get; private set; }
 
-    [Header("Score")] 
-    public int score = 0;
     [Header("Score UI")]
-    public TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    private NetworkVariable<int> networkScore = new NetworkVariable<int>(0);
 
-    private NetworkVariable<int> networkScore = new NetworkVariable<int>();
-    
+    [Header("Health UI (Should not be here but mb)")]
+    [SerializeField] private TextMeshProUGUI healthText;
+
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            Destroy(gameObject);
+            return;
         }
-        else Destroy(gameObject);
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public override void OnNetworkSpawn()
@@ -29,23 +31,35 @@ public class ScoreManager : NetworkBehaviour
         UpdateScoreText(networkScore.Value);
     }
 
-    private void UpdateScoreText(int newScore)
-    {
-        if (scoreText != null)
-            scoreText.text = "Score: " + newScore;
-    }
-
     public void AddScore()
     {
         if (IsServer)
             networkScore.Value++;
-        else
-            AddScoreServerRpc();
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void AddScoreServerRpc()
+    public void RegisterHealth(Health h)
     {
-        networkScore.Value++;
+        if (healthText == null)
+        {
+            var go = GameObject.Find("HealthText");
+            healthText = go != null ? go.GetComponent<TextMeshProUGUI>() : null;
+            if (healthText == null)
+                Debug.LogError("ScoreManager: HealthText UI not found!");
+        }
+
+        h.OnHealthChanged += UpdateHealthText;
+        UpdateHealthText(h.CurrentHealth);
+    }
+
+    private void UpdateScoreText(int score)
+    {
+        if (scoreText != null)
+            scoreText.text = $"Score: {score}";
+    }
+
+    private void UpdateHealthText(int health)
+    {
+        if (healthText != null)
+            healthText.text = $"Health: {health}";
     }
 }
